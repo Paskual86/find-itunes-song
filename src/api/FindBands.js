@@ -29,6 +29,7 @@ const DEFAULT_BANDS = [
 async function FindBand(bandName, count) {
   let url = new URL("https://itunes.apple.com/search");
   if (bandName && bandName.trim().length > 0) {
+    console.log("Executind Find Band");
     let param = new URLSearchParams({ term: bandName }).toString();
     url.search = param;
 
@@ -55,7 +56,6 @@ async function FindBand(bandName, count) {
       }
     );
 
-    console.log(unique);
     if (unique.length > count) {
       return unique.slice(0, count);
     } else {
