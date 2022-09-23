@@ -30,7 +30,6 @@ const bandListReducer = (state, action) => {
   }
 
   if (action.type === "FILL") {
-    console.log(action.val);
     if (!state.value || state.value.length === 0) {
       return {
         initialValue: action.val,
