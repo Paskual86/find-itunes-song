@@ -8,7 +8,9 @@ function SongList(props) {
   const [bandQueue, setBandQueue] = useState([]);
 
   useEffect(() => {
-    setBandQueue(props.bands);
+    if (props.bands.length > 0) {
+      setBandQueue(props.bands);
+    }
   }, [props.bands]);
 
   useEffect(() => {

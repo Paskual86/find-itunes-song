@@ -1,19 +1,23 @@
 import React from "react";
-import { useState } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { FindBand } from "../../api/FindBands";
 import "./SongFilter.css";
 
 function SongFilter({ onChangeFilter }) {
   const [band, setBand] = useState("");
 
+  const fetchData = useCallback(async () => {
+    const data = await FindBand(band, 5);
+    onChangeFilter(data);
+  }, [onChangeFilter, band]);
+
   const onChangeHandler = (event) => {
     setBand(event.target.value);
   };
 
-  const onClickHandler = async () => {
-    let data = await FindBand(band, 5);
-    onChangeFilter(data);
-  };
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
   return (
     <div className="song-filter">
@@ -23,7 +27,6 @@ function SongFilter({ onChangeFilter }) {
           placeholder="Search Band"
           onChange={onChangeHandler}
         ></input>
-        <button onClick={onClickHandler}>Call</button>
       </div>
     </div>
   );
