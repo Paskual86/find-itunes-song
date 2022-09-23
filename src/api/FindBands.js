@@ -1,28 +1,23 @@
 const DEFAULT_BANDS = [
   {
-    id: "a",
+    id: 1,
     title: "A",
-    position: 1,
   },
   {
-    id: "b",
+    id: 2,
     title: "B",
-    position: 2,
   },
   {
-    id: "c",
+    id: 3,
     title: "C",
-    position: 3,
   },
   {
-    id: "d",
+    id: 4,
     title: "D",
-    position: 4,
   },
   {
-    id: "e",
+    id: 5,
     title: "E",
-    position: 5,
   },
 ];
 
@@ -36,32 +31,22 @@ async function FindBand(bandName, count) {
       if (response.ok) {
         const data = await response.json();
 
-        const result = data.results.map((bandData) => {
-          return {
-            id: bandData.collectionId,
-            title: bandData.collectionName,
-          };
-        });
+        const result = data.results.map((bandData) => bandData.collectionName);
 
-        let sortedResult = result.sort((band1, band2) =>
-          band1.title > band2.title ? 1 : -1
-        );
-        let unique = Array.from(new Set(sortedResult.map((x) => x.title))).map(
-          (ttl, index) => {
-            return {
-              id: sortedResult.find((s) => s.title === ttl).id,
-              title: ttl,
-              position: index + 1,
-            };
-          }
-        );
+        let sortedResult = result.sort();
+        let unique = [...new Set(sortedResult)];
 
         const uniqueResult = unique.filter(
-          (band) => band && band.title && band.title.trim().length > 0
+          (band) => band && band && band.trim().length > 0
         );
 
         if (uniqueResult.length > count) {
-          return uniqueResult.slice(0, count);
+          return uniqueResult.slice(0, count).map((val, index) => {
+            return {
+              id: index + 1,
+              title: val,
+            };
+          });
         } else {
           if (uniqueResult.length === 0) {
             return [...DEFAULT_BANDS];
