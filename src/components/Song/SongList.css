@@ -1,0 +1,9 @@
+.song-list {
+    list-style: none;
+    padding: 0;
+}
+
+.song-list__fallback {
+    color: white;
+    text-align: center;
+}

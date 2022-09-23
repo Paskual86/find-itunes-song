@@ -1,0 +1,19 @@
+.song-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem;
+    margin: 1rem 0;
+    background-color: var(--song-item-background-color);
+}
+
+.song-item__description {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    align-items: center;
+    flex-flow: column-reverse;
+    justify-content: flex-start;
+    flex: 1;
+    color: var(--song-item__description-color)
+}
