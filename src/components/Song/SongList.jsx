@@ -1,9 +1,25 @@
 import React from "react";
 import SongItem from "./SongItem";
 import "./SongList.css";
+import { useState } from "react";
+import { useEffect } from "react";
 
 function SongList(props) {
-  console.log(props);
+  const [bandQueue, setBandQueue] = useState([]);
+
+  useEffect(() => {
+    setBandQueue(props.bands);
+  }, [props.bands]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      let arrayAux = [...bandQueue];
+      let firstValue = arrayAux.shift();
+      arrayAux.push(firstValue);
+      setBandQueue(arrayAux);
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [bandQueue]);
 
   if (props.bands.length === 0) {
     return <h2 className="song-list__fallback">No Song Found</h2>;
@@ -11,8 +27,8 @@ function SongList(props) {
 
   return (
     <ul className="song-list">
-      {props.bands.map((exp, itemId) => {
-        return <SongItem key={exp.id} title={exp.title}></SongItem>;
+      {bandQueue.map((band, itemId) => {
+        return <SongItem key={band.id} title={band.title}></SongItem>;
       })}
     </ul>
   );

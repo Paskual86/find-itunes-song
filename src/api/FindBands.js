@@ -27,43 +27,54 @@ const DEFAULT_BANDS = [
 ];
 
 async function FindBand(bandName, count) {
-  let url = new URL("https://itunes.apple.com/search");
+  const url = new URL("https://itunes.apple.com/search");
   if (bandName && bandName.trim().length > 0) {
-    console.log("Executind Find Band");
-    let param = new URLSearchParams({ term: bandName }).toString();
+    const param = new URLSearchParams({ term: bandName }).toString();
     url.search = param;
+    try {
+      const response = await fetch(url);
+      if (response.ok) {
+        const data = await response.json();
 
-    const response = await fetch(url);
-    const data = await response.json();
+        const result = data.results.map((bandData) => {
+          return {
+            id: bandData.collectionId,
+            title: bandData.collectionName,
+          };
+        });
 
-    let result = data.results.map((bandData) => {
-      return {
-        id: bandData.collectionId,
-        title: bandData.collectionName,
-      };
-    });
+        let sortedResult = result.sort((band1, band2) =>
+          band1.title > band2.title ? 1 : -1
+        );
+        let unique = Array.from(new Set(sortedResult.map((x) => x.title))).map(
+          (ttl, index) => {
+            return {
+              id: sortedResult.find((s) => s.title === ttl).id,
+              title: ttl,
+              position: index + 1,
+            };
+          }
+        );
 
-    let sortedResult = result.sort((band1, band2) =>
-      band1.title.toLowerCase() > band2.title.toLowerCase() ? 1 : -1
-    );
-    let unique = Array.from(new Set(sortedResult.map((x) => x.title))).map(
-      (ttl, index) => {
-        return {
-          id: sortedResult.find((s) => s.title === ttl).id,
-          title: ttl,
-          position: index + 1,
-        };
+        const uniqueResult = unique.filter(
+          (band) => band && band.title && band.title.trim().length > 0
+        );
+
+        if (uniqueResult.length > count) {
+          return uniqueResult.slice(0, count);
+        } else {
+          if (uniqueResult.length === 0) {
+            return [...DEFAULT_BANDS];
+          } else {
+            return uniqueResult.concat(DEFAULT_BANDS).slice(0, count);
+          }
+        }
       }
-    );
-
-    if (unique.length > count) {
-      return unique.slice(0, count);
-    } else {
-      return unique;
+    } catch (error) {
+      console.error(error);
     }
-  } else {
-    return [...DEFAULT_BANDS];
   }
+  return DEFAULT_BANDS;
 }
 
 export { FindBand };
